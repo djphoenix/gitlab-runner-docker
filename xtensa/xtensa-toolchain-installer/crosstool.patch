@@ -1,0 +1,43 @@
+diff --git a/scripts/crosstool-NG.sh.in b/scripts/crosstool-NG.sh.in
+index 568c73e..a6ed4a0 100644
+--- a/scripts/crosstool-NG.sh.in
++++ b/scripts/crosstool-NG.sh.in
+@@ -25,14 +25,6 @@
+ . .config.2
+ # Yes! We can do full logging from now on!
+ 
+-# Check running as root
+-if [ -z "${CT_ALLOW_BUILD_AS_ROOT_SURE}" ]; then
+-    if [ $(id -u) -eq 0 ]; then
+-        CT_DoLog ERROR "You must NOT be root to run crosstool-NG"
+-        exit 1
+-    fi
+-fi
+-
+ # If we want an interactive debug-shell, we must ensure these FDs
+ # are indeed connected to a terminal (and not redirected in any way).
+ if [ "${CT_DEBUG_INTERACTIVE}" = "y" -a ! \( -t 0 -a -t 6 -a -t 2 \) ]; then
+@@ -88,11 +80,6 @@ CT_WORK_DIR="${CT_WORK_DIR:-${CT_TOP_DIR}/.build}"
+ CT_DoExecLog ALL mkdir -p "${CT_WORK_DIR}"
+ CT_DoExecLog DEBUG rm -f "${CT_WORK_DIR}/backtrace"
+ 
+-# Check build file system case-sensitiveness
+-CT_DoExecLog DEBUG touch "${CT_WORK_DIR}/foo"
+-CT_TestAndAbort "Your file system in '${CT_WORK_DIR}' is *not* case-sensitive!" -f "${CT_WORK_DIR}/FOO"
+-CT_DoExecLog DEBUG rm -f "${CT_WORK_DIR}/foo"
+-
+ # Check the user is using an existing SHELL to be used by ./configure and Makefiles
+ CT_TestOrAbort "The CONFIG_SHELL '${CT_CONFIG_SHELL}' is not valid" -f "${CT_CONFIG_SHELL}" -a -x "${CT_CONFIG_SHELL}"
+ 
+@@ -270,11 +252,6 @@ CT_DoExecLog ALL mkdir -p "${CT_HOST_COMPLIBS_DIR}"
+ # Only create the state dir if asked for a restartable build
+ [ -n "${CT_DEBUG_CT_SAVE_STEPS}" ] && CT_DoExecLog ALL mkdir -p "${CT_STATE_DIR}"
+ 
+-# Check install file system case-sensitiveness
+-CT_DoExecLog DEBUG touch "${CT_PREFIX_DIR}/foo"
+-CT_TestAndAbort "Your file system in '${CT_PREFIX_DIR}' is *not* case-sensitive!" -f "${CT_PREFIX_DIR}/FOO"
+-CT_DoExecLog DEBUG rm -f "${CT_PREFIX_DIR}/foo"
+-
+ # Kludge: CT_INSTALL_DIR and CT_PREFIX_DIR might have grown read-only if
+ # the previous build was successful.
+ CT_DoExecLog ALL chmod -R u+w "${CT_INSTALL_DIR}" "${CT_PREFIX_DIR}"
